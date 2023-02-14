@@ -1,0 +1,48 @@
+plugins {
+    id 'java'
+    id 'application'
+    id 'com.diffplug.spotless' version '5.17.1'
+
+}
+
+group 'org.example'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'net.bytebuddy:byte-buddy:1.12.22'
+    implementation 'net.bytebuddy:byte-buddy-agent:1.12.22'
+    implementation 'org.glassfish.grizzly:grizzly-http-server:2.3.20'
+    implementation 'org.glassfish.jersey.containers:jersey-container-grizzly2-http:2.18'
+    implementation 'javax.xml.bind:jaxb-api:2.2.3'
+    implementation 'javax.ws.rs:javax.ws.rs-api:2.0'
+}
+
+test {
+    useJUnitPlatform()
+}
+
+application {
+    mainClass = 'Main'
+}
+
+spotless {
+    java {
+        importOrder()
+        removeUnusedImports()
+        googleJavaFormat()
+    }
+}
+
+tasks.register('run_NOOK', JavaExec) {
+    final JavaExec run = tasks.withType(JavaExec).find { exec -> exec.name == 'run' }
+    classpath = run.classpath
+    mainClass = run.mainClass
+    dependsOn(run.dependsOn)
+    args('retransform')
+    group = run.group
+}
+
